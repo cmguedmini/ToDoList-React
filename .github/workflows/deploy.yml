@@ -1,0 +1,37 @@
+name: Deploy to Azure Storage Blob
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18'
+
+    - name: Install dependencies
+      run: |
+        pnpm install
+
+    - name: Build the application
+      run: |
+        pnpm run build
+
+    - name: Deploy to Azure Storage Blob
+      uses: Azure/CLI@v1
+      with:
+        inlineScript: |
+          az storage blob upload-batch -d '$web' -s './app/dist' --account-name <your-storage-account-name>
+          az cdn endpoint purge -g <your-resource-group> --profile-name <your-cdn-profile> --name <your-cdn-endpoint> --content-paths '/*'
+      env:
+        AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
+        AZURE_STORAGE_KEY: ${{ secrets.AZURE_STORAGE_KEY }}
