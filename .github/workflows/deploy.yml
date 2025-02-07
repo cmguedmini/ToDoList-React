@@ -30,8 +30,8 @@ jobs:
       uses: Azure/CLI@v1
       with:
         inlineScript: |
-          az storage blob upload-batch -d '$web' -s './app/dist' --account-name <your-storage-account-name>
-          az cdn endpoint purge -g <your-resource-group> --profile-name <your-cdn-profile> --name <your-cdn-endpoint> --content-paths '/*'
+          az storage blob upload-batch -d '$web' -s './app/dist' --account-name $AZURE_STORAGE_ACCOUNT
+          az cdn endpoint purge -g $AZURE_RESOURCE_GROUP --profile-name $AZURE_CDN_PROFILE --name $AZURE_CDN_ENDPOINT --content-paths '/*'
       env:
         AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
         AZURE_STORAGE_KEY: ${{ secrets.AZURE_STORAGE_KEY }}
