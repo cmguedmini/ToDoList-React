@@ -22,7 +22,16 @@ function App() {
       <button onClick={addTodo}>Add Todo</button>
       <ul>
         {todos.map((todo, index) => (
-          <li key={index}>{todo}</li>
+          <li key={index}>
+            {todo}
+            <button onClick={() => {
+              const confirmDelete = window.confirm('Are you sure you want to delete this todo?');
+              if (confirmDelete) {
+                const updatedTodos = todos.filter((_, i) => i !== index);
+                setTodos(updatedTodos);
+              }
+            }}>Delete</button>
+          </li>
         ))}
       </ul>
     </div>
