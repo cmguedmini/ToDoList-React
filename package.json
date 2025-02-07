@@ -1,0 +1,13 @@
+{
+  "name": "todolist",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "cd app && pnpm run dev",
+    "start:fake": "cd fake && pnpm run start",
+    "test": "cd e2e && pnpm run test:e2e",
+    "test:e2e": "cd e2e && pnpm run test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.50.1"
+  }
+}
