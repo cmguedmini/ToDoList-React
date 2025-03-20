@@ -1,9 +1,11 @@
 {
   "name": "todolist",
   "version": "1.0.0",
+  "packageManager": "pnpm@8.15.7",  // Specify pnpm version
   "scripts": {
     "start": "cd app && pnpm run dev",
     "start:fake": "cd fake && pnpm run start",
+    "build": "cd app && pnpm run build",  // Added build script
     "test": "cd e2e && pnpm run test:e2e",
     "test:e2e": "cd e2e && pnpm run test"
   },
