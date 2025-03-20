@@ -3,6 +3,8 @@ name: Build and Deploy to Azure Blob Storage
 on:
   push:
     branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
 
 jobs:
   build-and-deploy:
@@ -26,10 +28,17 @@ jobs:
       - name: Build Project
         run: pnpm build
 
+      - name: Verify Build Output
+        run: ls -la ./app/dist
+
       - name: Upload to Azure Blob Storage
-        uses: Azure/azcopy-actions@v1
-        with:
-          # Connection string format: "BlobEndpoint=https://[account].blob.core.windows.net/;SharedAccessSignature=[sas_token]"
-          connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
-          source: './app/dist/'
-          destination: 'https://${{ secrets.AZURE_STORAGE_ACCOUNT }}.blob.core.windows.net/${{ secrets.AZURE_STORAGE_CONTAINER }}'
+        uses: azure/CLI@v1
+        env:
+          SOURCE_DIR: './app/dist'
+          CONTAINER: ${{ secrets.AZURE_STORAGE_CONTAINER }}
+          SAS_TOKEN: ${{ secrets.AZURE_STORAGE_SAS_TOKEN }}
+          ACCOUNT_NAME: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
+        run: |
+          azcopy copy "$SOURCE_DIR" \
+          "https://$ACCOUNT_NAME.blob.core.windows.net/$CONTAINER$SAS_TOKEN" \
+          --recursive
