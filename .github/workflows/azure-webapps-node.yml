@@ -1,0 +1,42 @@
+name: Build and Deploy to Azure Blob Storage
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout code
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Set up Node.js 20 with pnpm
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.x
+          cache: 'pnpm'
+
+      # Install pnpm using Corepack
+      - name: Enable Corepack for pnpm
+        run: corepack enable && pnpm -v
+
+      # Install dependencies and build
+      - name: Install Dependencies
+        run: pnpm install
+
+      - name: Build Project
+        run: pnpm build
+
+      # Deploy to Azure Blob Storage
+      - name: Upload to Azure Blob Storage
+        uses: azure/storage-blob-upload@v1
+        with:
+          source_dir: './app/dist'  # Updated output directory
+          container_name: ${{ secrets.AZURE_STORAGE_CONTAINER }}
+          sas_token: ${{ secrets.AZURE_STORAG E_SAS_TOKEN }}
+          account_name: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
