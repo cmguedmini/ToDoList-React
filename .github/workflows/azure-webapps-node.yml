@@ -38,5 +38,5 @@ jobs:
         with:
           source_dir: './app/dist'  # Updated output directory
           container_name: ${{ secrets.AZURE_STORAGE_CONTAINER }}
-          sas_token: ${{ secrets.AZURE_STORAG E_SAS_TOKEN }}
+          sas_token: ${{ secrets.AZURE_STORAGE_SAS_TOKEN }}
           account_name: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
