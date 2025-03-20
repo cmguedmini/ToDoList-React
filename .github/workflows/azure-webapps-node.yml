@@ -3,8 +3,6 @@ name: Build and Deploy to Azure Blob Storage
 on:
   push:
     branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
 
 jobs:
   build-and-deploy:
@@ -31,14 +29,15 @@ jobs:
       - name: Verify Build Output
         run: ls -la ./app/dist
 
-      - name: Upload to Azure Blob Storage
+      - name: Setup Azure CLI
         uses: azure/CLI@v1
-        env:
-          SOURCE_DIR: './app/dist'
-          CONTAINER: ${{ secrets.AZURE_STORAGE_CONTAINER }}
-          SAS_TOKEN: ${{ secrets.AZURE_STORAGE_SAS_TOKEN }}
-          ACCOUNT_NAME: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
+        with:
+          inline-script: |
+            az --version
+            azcopy --version
+
+      - name: Upload to Azure Blob Storage
         run: |
-          azcopy copy "$SOURCE_DIR" \
-          "https://$ACCOUNT_NAME.blob.core.windows.net/$CONTAINER$SAS_TOKEN" \
+          azcopy copy "./app/dist" \
+          "https://${{ secrets.AZURE_STORAGE_ACCOUNT }}.blob.core.windows.net/${{ secrets.AZURE_STORAGE_CONTAINER }}${{ secrets.AZURE_STORAGE_SAS_TOKEN }}" \
           --recursive
